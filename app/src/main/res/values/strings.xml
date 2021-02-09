@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Social Network</string>
+
+    <string name="post_title">Title</string>
+    <string name="add_post">Add a post</string>
+    <string name="description">Description</string>
+    <string name="add">Poster</string>
+    <string name="like">Like</string>
+    <string name="comment">Comment</string>
+    <string name="password">Password</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="sign_up">Sign up</string>
+    <string name="sign_in">Sign in</string>
+    <string name="i_have_an_account">I have an account already</string>
+    <string name="create_account">New user ? create account</string>
+    <string name="logout">Logout</string>
+    <string name="firstname">Firstname</string>
+    <string name="lastname">Lastname</string>
+
+    <!-- Strings used for fragments for navigation -->
+
+
+</resources>

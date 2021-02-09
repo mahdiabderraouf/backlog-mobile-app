@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1063551725990",
+    "firebase_url": "https://backlog-project-2453c-default-rtdb.firebaseio.com",
+    "project_id": "backlog-project-2453c",
+    "storage_bucket": "backlog-project-2453c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1063551725990:android:b2842e08ac74aa8cbf9f67",
+        "android_client_info": {
+          "package_name": "fr.isen.auroux.backlogapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1063551725990-o4ll7meddmvha9t1dhgmke76dunuklea.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAh3jVW9z7kp0lrJ6cqZyN1sBmdmFtbp28"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1063551725990-o4ll7meddmvha9t1dhgmke76dunuklea.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
