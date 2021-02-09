@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1049192208552",
+    "project_id": "social-network-cb966",
+    "storage_bucket": "social-network-cb966.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1049192208552:android:2cc728dc698092f9c70a9d",
+        "android_client_info": {
+          "package_name": "fr.isen.mahdi.socialnetwork"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1049192208552-h5ah1akq2akgrsci697sd51203s8vsmi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGbKym9sneBjMjY_ptSMrQXtvxpDJ3NSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1049192208552-h5ah1akq2akgrsci697sd51203s8vsmi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
