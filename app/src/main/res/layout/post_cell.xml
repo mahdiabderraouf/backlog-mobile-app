@@ -64,7 +64,6 @@
             android:layout_margin="8dp"
             android:layout_weight="1"
             android:background="@drawable/ic_rounded_corner"
-            android:contentDescription="@string/like"
             android:padding="8dp"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/ic_thumbs_up" />
