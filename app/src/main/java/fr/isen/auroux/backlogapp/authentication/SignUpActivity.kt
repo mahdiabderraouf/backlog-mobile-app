@@ -11,7 +11,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import fr.isen.auroux.backlogapp.databinding.ActivitySignupBinding
-import fr.isen.mahdi.backlogapp.network.User
+import fr.isen.auroux.backlogapp.network.User
 
 class SignUpActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignupBinding

@@ -1,4 +1,4 @@
-package fr.isen.mahdi.socialnetwork
+package fr.isen.auroux.backlogapp.network
 
 class NetworkConstant {
 
@@ -8,7 +8,5 @@ class NetworkConstant {
         const val FIRSTNAME = "firstname"
         const val EMAIL = "email"
         const val PASSWORD = "password"
-
-
     }
 }
