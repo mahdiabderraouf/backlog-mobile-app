@@ -40,9 +40,10 @@
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
         android:clickable="true"
+        android:focusable="true"
+        app:backgroundTint="@color/green"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_icon_add"
-        android:focusable="true" />
+        app:srcCompat="@drawable/add_circle_icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

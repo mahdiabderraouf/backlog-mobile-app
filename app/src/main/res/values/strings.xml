@@ -14,14 +14,18 @@
     <string name="firstname">Firstname</string>
     <string name="lastname">Lastname</string>
 
-    //screen 2
 
+
+
+
+    <string name="add_project">Add a project</string>
+    <string name="add_project_title">Add a project title</string>
+    <string name="add_project_description">Add a post description</string>
+
+    //screen 2
     <string name="screen2_title">Your projects</string>
     <string name="nameProject">Name of the project</string>
     <string name="descriptionProject">Description of the project</string>
-    <string name="add_project">Add a post</string>
-    <string name="add_project_title">Add a project title</string>
-    <string name="add_project_description">Add a post description</string>
     <string name="textview">textview</string>
 
     <!-- Strings used for fragments for navigation -->

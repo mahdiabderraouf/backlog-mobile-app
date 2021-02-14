@@ -1,6 +1,5 @@
 package fr.isen.auroux.backlogapp.network
 
-import android.net.Uri
 import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
 
