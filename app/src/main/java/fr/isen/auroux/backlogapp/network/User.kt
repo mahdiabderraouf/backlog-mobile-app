@@ -1,4 +1,4 @@
-package fr.isen.mahdi.backlogapp.network
+package fr.isen.auroux.backlogapp.network
 
 import com.google.firebase.database.IgnoreExtraProperties
 

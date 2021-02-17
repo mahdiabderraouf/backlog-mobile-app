@@ -7,18 +7,28 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import fr.isen.auroux.backlogapp.databinding.ActivitySigninBinding
+import fr.isen.auroux.backlogapp.network.User
 
 class SignInActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySigninBinding
     private lateinit var auth: FirebaseAuth
+    private lateinit var database: DatabaseReference
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySigninBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         auth = Firebase.auth
+        database = Firebase.database.reference
 
         binding.btnSignIn.setOnClickListener {
             if(verifyInformations()) {
@@ -37,8 +47,7 @@ class SignInActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(binding.email.text.toString(), binding.password.text.toString())
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d("firebase", "signInWithEmail:success")
+                    getUser()
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w("firebase", "signInWithEmail:failure", task.exception)
@@ -51,5 +60,26 @@ class SignInActivity : AppCompatActivity() {
     private fun verifyInformations(): Boolean {
         return (binding.email.text?.isNotEmpty() == true &&
                 binding.password.text?.count() ?: 0 >= 6)
+    }
+
+    private fun getUser() {
+        val userListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                val users = dataSnapshot.getValue<HashMap<String, User>>()
+                val user = users?.values?.firstOrNull {
+                    it.id == auth.currentUser?.uid
+                }
+                /**
+                 * Todo: Save user to cache
+                 */
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w("firebase", "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+        database.child("users").addListenerForSingleValueEvent(userListener)
     }
 }

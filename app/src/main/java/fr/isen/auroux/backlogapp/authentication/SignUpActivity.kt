@@ -11,12 +11,13 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import fr.isen.auroux.backlogapp.databinding.ActivitySignupBinding
-import fr.isen.mahdi.backlogapp.network.User
+import fr.isen.auroux.backlogapp.network.User
 
 class SignUpActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignupBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignupBinding.inflate(layoutInflater)
@@ -43,9 +44,7 @@ class SignUpActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    Log.d("firebase", "createUserWithEmail:success")
                     addUser()
-
                     //startActivity(intent)
                 } else {
                     // If sign in fails, display a message to the user.
@@ -56,24 +55,23 @@ class SignUpActivity : AppCompatActivity() {
             }
     }
 
-    private fun addUser(){
-        val id = database.child("users").push().key
+    private fun addUser() {
+        val key = database.child("users").push().key
         val user = User(
-            id = id,
+            id = auth.currentUser?.uid,
             username = binding.username.text.toString(),
             lastname = binding.lastname.text.toString(),
             firstname = binding.firstname.text.toString(),
             email = binding.email.text.toString()
         )
-        id?.let { database.child("users").child(it).setValue(user) }
+        key?.let { database.child("users").child(it).setValue(user) }
     }
 
     private fun verifyInformations(): Boolean {
-        return (binding.email.text?.isNotEmpty() == true &&
+        return binding.email.text?.isNotEmpty() == true &&
                 binding.password.text?.count() ?: 0 >= 6 &&
                 binding.username.text?.isNotEmpty() == true &&
                 binding.lastname.text?.isNotEmpty() == true &&
                 binding.firstname.text?.isNotEmpty() == true
-                )
     }
 }
