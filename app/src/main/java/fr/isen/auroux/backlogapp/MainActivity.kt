@@ -8,6 +8,7 @@ import com.google.firebase.ktx.Firebase
 import fr.isen.auroux.backlogapp.databinding.ActivityMainBinding
 import fr.isen.auroux.backlogapp.authentication.SignInActivity
 import fr.isen.auroux.backlogapp.authentication.SignUpActivity
+import fr.isen.auroux.backlogapp.project.ProjectBacklogActivity
 
 class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -25,13 +26,16 @@ class MainActivity : BaseActivity() {
             val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
         }
+
+        val intent = Intent(this, ProjectBacklogActivity::class.java)
+        startActivity(intent)
     }
 
     public override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
-        if(currentUser != null){
+        if(currentUser != null) {
 
         }
     }

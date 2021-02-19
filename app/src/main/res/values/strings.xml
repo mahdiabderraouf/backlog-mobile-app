@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Social Network</string>
+    <string name="app_name">Backloger</string>
 
     <string name="post_title">Title</string>
     <string name="add_post">Add a post</string>
@@ -17,6 +17,7 @@
     <string name="logout">Logout</string>
     <string name="firstname">Firstname</string>
     <string name="lastname">Lastname</string>
+    <string name="todo">Todo</string>
 
     <!-- Strings used for fragments for navigation -->
 
