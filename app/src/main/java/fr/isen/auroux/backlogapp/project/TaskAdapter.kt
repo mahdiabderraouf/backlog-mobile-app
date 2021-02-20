@@ -24,7 +24,6 @@ class TaskAdapter (
 
     override fun onBindViewHolder(holder: TasksViewHolder, position: Int) {
         holder.textView.text = tasks[position].title
-        holder.cardView.setOnDragListener { v, event -> event }
     }
 
     override fun getItemCount(): Int {
