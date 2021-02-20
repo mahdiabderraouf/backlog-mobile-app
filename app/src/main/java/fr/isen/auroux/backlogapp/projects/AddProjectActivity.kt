@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package fr.isen.auroux.backlogapp.projects
 
 import android.Manifest
