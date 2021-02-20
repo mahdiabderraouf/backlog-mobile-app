@@ -27,6 +27,7 @@
     <string name="nameProject">Name of the project</string>
     <string name="descriptionProject">Description of the project</string>
     <string name="textview">textview</string>
+    <string name="checkbox">Finished</string>
 
     <!-- Strings used for fragments for navigation -->
 
