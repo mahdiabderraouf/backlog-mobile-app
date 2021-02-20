@@ -1,12 +1,9 @@
 <resources>
     <string name="app_name">Backloger</string>
 
-    <string name="post_title">Title</string>
-    <string name="add_post">Add a post</string>
     <string name="description">Description</string>
-    <string name="add">Poster</string>
+    <string name="add">Add</string>
     <string name="like">Like</string>
-    <string name="comment">Comment</string>
     <string name="password">Password</string>
     <string name="username">Username</string>
     <string name="email">Email</string>
@@ -17,7 +14,11 @@
     <string name="logout">Logout</string>
     <string name="firstname">Firstname</string>
     <string name="lastname">Lastname</string>
-    <string name="todo">Todo</string>
+    <string name="todo">To do</string>
+    <string name="doing">Doing</string>
+    <string name="done">Done</string>
+    <string name="add_item">+ Add an item</string>
+    <string name="add_item_hint">Type something in here ...</string>
 
     <!-- Strings used for fragments for navigation -->
 

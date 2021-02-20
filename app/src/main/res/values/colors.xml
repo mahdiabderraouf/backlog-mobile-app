@@ -10,4 +10,5 @@
     <color name="light_gray">#ebecf0</color>
     <color name="pomegranate">#F44336</color>
     <color name="pomegranate_variant">#988980</color>
+    <color name="red">#FF0000</color>
 </resources>
