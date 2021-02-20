@@ -3,6 +3,7 @@ package fr.isen.auroux.backlogapp.project
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import fr.isen.auroux.backlogapp.databinding.TaskCellBinding
 import fr.isen.auroux.backlogapp.network.Task
@@ -23,6 +24,7 @@ class TaskAdapter (
 
     override fun onBindViewHolder(holder: TasksViewHolder, position: Int) {
         holder.textView.text = tasks[position].title
+        holder.cardView.setOnDragListener { v, event -> event }
     }
 
     override fun getItemCount(): Int {
@@ -31,5 +33,6 @@ class TaskAdapter (
 
     class TasksViewHolder(taskCellBinding: TaskCellBinding) : RecyclerView.ViewHolder(taskCellBinding.root) {
         val textView: TextView = taskCellBinding.taskTitle
+        val cardView: CardView = taskCellBinding.cardView
     }
 }
