@@ -3,6 +3,10 @@
 
     <string name="description">Description</string>
     <string name="add">Add</string>
+    <string name="add_project">Add project</string>
+    <string name="upload_image">Upload Image</string>
+    <string name="Add_Project">Add New Project</string>
+    <string name="Project_name">Project Name</string>
     <string name="like">Like</string>
     <string name="password">Password</string>
     <string name="username">Username</string>

@@ -8,6 +8,7 @@ import com.google.firebase.ktx.Firebase
 import fr.isen.auroux.backlogapp.databinding.ActivityMainBinding
 import fr.isen.auroux.backlogapp.authentication.SignInActivity
 import fr.isen.auroux.backlogapp.authentication.SignUpActivity
+import fr.isen.auroux.backlogapp.project.AddProjectActivity
 import fr.isen.auroux.backlogapp.project.ProjectBacklogActivity
 
 class MainActivity : BaseActivity() {
@@ -27,7 +28,7 @@ class MainActivity : BaseActivity() {
             startActivity(intent)
         }
 
-        val intent = Intent(this, ProjectBacklogActivity::class.java)
+        val intent = Intent(this, AddProjectActivity::class.java)
         startActivity(intent)
     }
 
