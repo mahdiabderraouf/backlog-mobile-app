@@ -15,9 +15,6 @@
     <string name="lastname">Lastname</string>
 
 
-
-
-
     <string name="add_project">Add a project</string>
     <string name="add_project_title">Add a project title</string>
     <string name="add_project_description">Add a post description</string>
@@ -27,7 +24,7 @@
     <string name="nameProject">Name of the project</string>
     <string name="descriptionProject">Description of the project</string>
     <string name="textview">textview</string>
-    <string name="checkbox">Finished</string>
+    <string name="finished">Finished</string>
 
     <!-- Strings used for fragments for navigation -->
 
