@@ -30,6 +30,8 @@ class MainActivity : BaseActivity() {
 
         val intent = Intent(this, AddProjectActivity::class.java)
         startActivity(intent)
+
+
     }
 
     public override fun onStart() {
