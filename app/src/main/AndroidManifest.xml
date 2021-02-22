@@ -10,14 +10,17 @@
         android:theme="@style/Theme.BacklogApp">
         <activity android:name=".projects.AddProjectActivity" />
         <activity android:name=".projects.ProjectsActivity" />
+        <activity android:name=".project.ProjectBacklogActivity" />
         <activity android:name=".authentication.SignInActivity" />
         <activity android:name=".authentication.SignUpActivity" />
         <activity android:name=".BaseActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
+
 </manifest>
