@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BacklogApp">
-        <activity android:name=".project.AddProjectActivity"></activity>
+        <activity android:name=".project.AddProjectActivity" />
+        <activity android:name=".project.ProjectsActivity" />
         <activity android:name=".project.ProjectBacklogActivity" />
         <activity android:name=".authentication.SignInActivity" />
         <activity android:name=".authentication.SignUpActivity" />
