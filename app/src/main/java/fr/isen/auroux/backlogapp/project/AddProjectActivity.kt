@@ -1,4 +1,4 @@
-package fr.isen.auroux.backlogapp.projects
+package fr.isen.auroux.backlogapp.project
 
 import android.Manifest
 import android.app.Activity
@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
@@ -17,8 +18,8 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import fr.isen.auroux.backlogapp.BaseActivity
+import fr.isen.auroux.backlogapp.R
 import fr.isen.auroux.backlogapp.databinding.ActivityAddProjectBinding
-import fr.isen.auroux.backlogapp.network.Project
 import java.util.*
 
 
@@ -30,18 +31,18 @@ class AddProjectActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        database = Firebase.database("https://social-network-cb966-default-rtdb.europe-west1.firebasedatabase.app/").reference
+        database = Firebase.database("https://backlog-project-2453c-default-rtdb.firebaseio.com/").reference
         binding = ActivityAddProjectBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         auth = Firebase.auth
 
-        binding.imageView.setOnClickListener {
-            //check runtime permission
+
+        binding.chooseImage.setOnClickListener {
+          //check runtime permission
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
                     //permission denied
-                val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
                     //show popup to request runtime permission
                     requestPermissions(permissions, PERMISSION_CODE)
                 }
@@ -55,33 +56,16 @@ class AddProjectActivity : BaseActivity() {
 
         binding.imgPickBtn.setOnClickListener {
             uploadImage()
-            addProject()
+          //  addPost()
         }
-    }
 
-    private fun addProject() {
-        val title = binding.addProjectTitle.text.toString().trim()
-        val description = binding.addProjectDescription.text.toString().trim()
-        if(title.isNotEmpty() && description.isNotEmpty()) {
-            val id = database.push().key
-            val project = auth.currentUser?.uid?.let {
-                Project(id = id, title = it, description = title, imageUrl = filepath.toString())
-            }
-            if (id != null) {
-                database.child("posts").child(id).setValue(project)
-                Toast.makeText(applicationContext,"Your post has been published", Toast.LENGTH_LONG).show()
-            }
-            val intent = Intent(this, ProjectsActivity::class.java)
-            startActivity(intent)
-        } else {
-            Toast.makeText(applicationContext,"Please fill all fields.", Toast.LENGTH_LONG).show()
-        }
     }
 
     private fun chooseImage() {
         //Intent to pick image
         val intent = Intent(Intent.ACTION_PICK)
         intent.type ="image/*"
+        intent.action=Intent.ACTION_GET_CONTENT
         startActivityForResult(intent, IMAGE_PICK_CODE)
     }
 
@@ -105,17 +89,13 @@ class AddProjectActivity : BaseActivity() {
                 val progress : Double = (100.0 * p0.bytesTransferred) / p0.totalByteCount
                 progressDialog.setMessage("Uploaded ${progress.toInt()}%")
             }
-        imageRef.child("users/me/profile.png").downloadUrl.addOnSuccessListener {
+        /*imageRef.child("users/me/profile.png").downloadUrl.addOnSuccessListener {
             // Got the download URL for 'users/me/profile.png'
             filepath = it
         }.addOnFailureListener {
             // Handle any errors
         }
-    }
-
-    companion object {
-        private const val IMAGE_PICK_CODE = 10
-        private const val PERMISSION_CODE = 11
+         */
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -132,12 +112,18 @@ class AddProjectActivity : BaseActivity() {
             }
         }
     }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
             filepath = data?.data!!
-            binding.imageView.setImageURI(filepath)
+            binding.chooseImage.setImageURI(filepath)
         }
     }
+
+    companion object {
+        private const val IMAGE_PICK_CODE = 10
+        private const val PERMISSION_CODE = 11
+    }
+
+
 }

@@ -1,4 +1,4 @@
-package fr.isen.auroux.backlogapp.projects
+package fr.isen.auroux.backlogapp.project
 
 interface PostCellClickListener {
     fun onLikeClickListener(postId: String)

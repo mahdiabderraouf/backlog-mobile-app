@@ -1,4 +1,4 @@
-package fr.isen.auroux.backlogapp.projects
+package fr.isen.auroux.backlogapp.project
 
 import android.content.Intent
 import android.os.Bundle
@@ -20,7 +20,8 @@ import fr.isen.auroux.backlogapp.databinding.ActivityProjectdisplayBinding
 import fr.isen.auroux.backlogapp.network.Project
 
 
-class ProjectsActivity : BaseActivity(), PostCellClickListener {
+class ProjectsActivity : BaseActivity(),
+    PostCellClickListener {
     private lateinit var binding: ActivityProjectdisplayBinding
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
@@ -67,7 +68,11 @@ class ProjectsActivity : BaseActivity(), PostCellClickListener {
     }
 
     private fun updateUi(projects: List<Project>) {
-        val adapter = ProjectAdapter(projects, this, database)
+        val adapter = ProjectAdapter(
+            projects,
+            this,
+            database
+        )
         binding.listofprojects.layoutManager = LinearLayoutManager(this)
         binding.listofprojects.adapter = adapter
     }
