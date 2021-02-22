@@ -12,6 +12,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import fr.isen.auroux.backlogapp.databinding.ActivitySignupBinding
 import fr.isen.auroux.backlogapp.network.User
+import fr.isen.auroux.backlogapp.project.ProjectsActivity
 
 class SignUpActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignupBinding
@@ -45,7 +46,8 @@ class SignUpActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     addUser()
-                    //startActivity(intent)
+                    val intent = Intent(this, ProjectsActivity::class.java)
+                    startActivity(intent)
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w("firebase", "createUserWithEmail:failure", task.exception)
