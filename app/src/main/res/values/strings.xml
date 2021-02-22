@@ -1,11 +1,7 @@
 <resources>
-    <string name="app_name">Social Network</string>
+    <string name="app_name">Project Backlog</string>
 
-    <string name="post_title">Title</string>
-    <string name="add_post">Add a post</string>
-    <string name="description">Description</string>
     <string name="add">Poster</string>
-    <string name="like">Like</string>
     <string name="comment">Comment</string>
     <string name="password">Password</string>
     <string name="username">Username</string>
@@ -17,6 +13,18 @@
     <string name="logout">Logout</string>
     <string name="firstname">Firstname</string>
     <string name="lastname">Lastname</string>
+
+
+    <string name="add_project">Add a project</string>
+    <string name="add_project_title">Add a project title</string>
+    <string name="add_project_description">Add a post description</string>
+
+    //screen 2
+    <string name="screen2_title">Your projects</string>
+    <string name="nameProject">Name of the project</string>
+    <string name="descriptionProject">Description of the project</string>
+    <string name="textview">textview</string>
+    <string name="finished">Finished</string>
 
     <!-- Strings used for fragments for navigation -->
 
