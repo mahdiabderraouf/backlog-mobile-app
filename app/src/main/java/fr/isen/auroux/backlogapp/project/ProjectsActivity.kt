@@ -18,7 +18,7 @@ import fr.isen.auroux.backlogapp.databinding.ActivityProjectdisplayBinding
 import fr.isen.auroux.backlogapp.network.Project
 
 class ProjectsActivity : BaseActivity(),
-    PostCellClickListener {
+    ProjectCellClickListener {
     private lateinit var binding: ActivityProjectdisplayBinding
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
@@ -43,9 +43,9 @@ class ProjectsActivity : BaseActivity(),
         val projectListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
-                val listofprojects = dataSnapshot.getValue<HashMap<String, Project>>()
-                if (listofprojects!= null) {
-                    updateUi(ArrayList(listofprojects.values))
+                val projects = dataSnapshot.getValue<HashMap<String, Project>>()
+                if (projects != null) {
+                    updateUi(ArrayList(projects.values))
                 }
             }
 
@@ -59,17 +59,18 @@ class ProjectsActivity : BaseActivity(),
 
     private fun updateUi(projects: List<Project>) {
         val adapter = ProjectAdapter(
-            projects
+            projects,
+            this
         )
         binding.listofprojects.layoutManager = LinearLayoutManager(this)
         binding.listofprojects.adapter = adapter
     }
 
-    override fun onLikeClickListener(postId: String) {
-        TODO("Not yet implemented")
-    }
+    override fun onClickListener(project: Project) {
+        val intent = Intent(this, ProjectBacklogActivity::class.java).apply {
+            putExtra("PROJECT", project)
+        }
 
-    override fun onClickListener() {
-        // Start detail activity
+        startActivity(intent)
     }
 }

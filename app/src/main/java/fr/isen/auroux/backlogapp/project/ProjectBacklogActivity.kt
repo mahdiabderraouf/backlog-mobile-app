@@ -1,7 +1,6 @@
 
 package fr.isen.auroux.backlogapp.project
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -15,28 +14,30 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import fr.isen.auroux.backlogapp.BaseActivity
 import fr.isen.auroux.backlogapp.databinding.ActivityProjectBacklogBinding
+import fr.isen.auroux.backlogapp.network.Project
 import fr.isen.auroux.backlogapp.network.Task
 
-class ProjectBacklogActivity : AppCompatActivity() {
+class ProjectBacklogActivity : BaseActivity() {
     private lateinit var binding: ActivityProjectBacklogBinding
     private lateinit var database: DatabaseReference
     private var tasks: List<Task>? = null
-    private lateinit var projectId: String
+    private lateinit var project: Project
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProjectBacklogBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        project = intent.getSerializableExtra("PROJECT") as Project
+
         val actionBar = supportActionBar
-        actionBar?.title = "Current project"
+        actionBar?.title = project.title
 
         database = Firebase.database.reference
 
-        // Get project id from intent extra
-        projectId = "-MTqJD878AnZhiFMx718"
-
-        getProjectTasks(projectId)
+        project.id?.let { getProjectTasks(it) }
 
         setClickListeners()
     }
@@ -175,7 +176,7 @@ class ProjectBacklogActivity : AppCompatActivity() {
 
     private fun addTask(title: String, status: Int) {
         val key = database.child("tasks").push().key
-        val task = Task(key, title, "", status, projectId)
+        val task = Task(key, title, "", status, project.id)
         if (key != null) {
             val addOperation = database.child("tasks").child(key).setValue(task)
             addOperation.addOnSuccessListener {
