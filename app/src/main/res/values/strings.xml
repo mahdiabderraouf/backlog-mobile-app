@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Backloger</string>
-
     <string name="description">Description</string>
     <string name="add">Add</string>
     <string name="add_project">Add project</string>
@@ -23,6 +22,18 @@
     <string name="done">Done</string>
     <string name="add_item">+ Add an item</string>
     <string name="add_item_hint">Type something in here ...</string>
+
+
+    <string name="add_project">Add a project</string>
+    <string name="add_project_title">Add a project title</string>
+    <string name="add_project_description">Add a post description</string>
+
+    //screen 2
+    <string name="screen2_title">Your projects</string>
+    <string name="nameProject">Name of the project</string>
+    <string name="descriptionProject">Description of the project</string>
+    <string name="textview">textview</string>
+    <string name="finished">Finished</string>
 
     <!-- Strings used for fragments for navigation -->
 
