@@ -7,9 +7,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
@@ -18,20 +19,21 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import fr.isen.auroux.backlogapp.BaseActivity
-import fr.isen.auroux.backlogapp.R
 import fr.isen.auroux.backlogapp.databinding.ActivityAddProjectBinding
+import fr.isen.auroux.backlogapp.network.Project
 import java.util.*
 
 
 class AddProjectActivity : BaseActivity() {
     private lateinit var binding:ActivityAddProjectBinding
     private lateinit var database: DatabaseReference
-    private lateinit var filepath : Uri
+     lateinit var filepath : Uri
+
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        database = Firebase.database("https://backlog-project-2453c-default-rtdb.firebaseio.com/").reference
+        database = Firebase.database.reference
         binding = ActivityAddProjectBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = Firebase.auth
@@ -56,47 +58,76 @@ class AddProjectActivity : BaseActivity() {
 
         binding.imgPickBtn.setOnClickListener {
             uploadImage()
-          //  addPost()
+            addProject()
         }
-
     }
-
     private fun chooseImage() {
         //Intent to pick image
         val intent = Intent(Intent.ACTION_PICK)
         intent.type ="image/*"
         intent.action=Intent.ACTION_GET_CONTENT
         startActivityForResult(intent, IMAGE_PICK_CODE)
+
     }
 
     private fun uploadImage() {
-        val imageName = UUID.randomUUID().toString()
-        val progressDialog = ProgressDialog(this)
-        progressDialog.setTitle("image Uploading")
-        progressDialog.show()
 
-        val imageRef: StorageReference = FirebaseStorage.getInstance().reference.child("images/$imageName")
-        imageRef.putFile(filepath)
-            .addOnSuccessListener {
-                progressDialog.dismiss()
-                Toast.makeText(this,"Image Uploaded", Toast.LENGTH_LONG).show()
+        if(filepath != null) {
+            val imageName = UUID.randomUUID().toString()
+            val progressDialog = ProgressDialog(this)
+            progressDialog.setTitle("image Uploading")
+            progressDialog.show()
+
+            val imageRef: StorageReference = FirebaseStorage.getInstance().reference.child("images/$imageName")
+            imageRef.putFile(filepath)
+                .addOnSuccessListener {
+                    progressDialog.dismiss()
+                   // Toast.makeText(this,"Image Uploaded", Toast.LENGTH_LONG).show()
+                }
+                .addOnFailureListener {  p0 ->
+                    progressDialog.dismiss()
+                    Toast.makeText(this, p0.message, Toast.LENGTH_LONG).show()
+                }
+                .addOnProgressListener { p0 ->
+                    val progress : Double = (100.0 * p0.bytesTransferred) / p0.totalByteCount
+                    progressDialog.setMessage("Uploaded ${progress.toInt()}%")
+
+                }
+
+            val imagepath = imageRef.child("users/me/profile.png")
+
+            imagepath.downloadUrl.addOnSuccessListener {
+                filepath = it
+            }.addOnFailureListener {
+                // Handle any errors
             }
-            .addOnFailureListener {  p0 ->
-                progressDialog.dismiss()
-                Toast.makeText(this, p0.message, Toast.LENGTH_LONG).show()
-            }
-            .addOnProgressListener { p0 ->
-                val progress : Double = (100.0 * p0.bytesTransferred) / p0.totalByteCount
-                progressDialog.setMessage("Uploaded ${progress.toInt()}%")
-            }
-        /*imageRef.child("users/me/profile.png").downloadUrl.addOnSuccessListener {
-            // Got the download URL for 'users/me/profile.png'
-            filepath = it
-        }.addOnFailureListener {
-            // Handle any errors
         }
-         */
+        else
+        {
+            Toast.makeText(this, "Please Upload an Image", Toast.LENGTH_SHORT).show()
+        }
     }
+
+
+        private fun addProject() {
+        val key = database.child("projects").push().key
+        val id = auth.currentUser?.uid
+        val title = binding.titleProject.text.toString().trim()
+
+            val project = Project(
+                id = id,
+                title = title,
+                imagePath = filepath.toString()
+            )
+            if (title.isNotEmpty()) {
+                key?.let { database.child("projects").child(it).setValue(project) }
+                Toast.makeText(applicationContext,"Your project has been saved", Toast.LENGTH_LONG).show()
+            }
+            else {
+                Toast.makeText(applicationContext, "Please fill the field.", Toast.LENGTH_LONG).show()
+            }
+    }
+
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when(requestCode) {
@@ -122,7 +153,7 @@ class AddProjectActivity : BaseActivity() {
     }
 
     companion object {
-        private const val IMAGE_PICK_CODE = 10
-        private const val PERMISSION_CODE = 11
+        private const val IMAGE_PICK_CODE = 100
+        private const val PERMISSION_CODE = 111
     }
 }
