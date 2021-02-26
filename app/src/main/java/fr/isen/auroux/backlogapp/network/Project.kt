@@ -7,5 +7,6 @@ import java.io.Serializable
 data class Project(
     val id: String? = null,
     val title: String? = null,
-    val imagePath: String? = null
+    val imagePath: String? = null,
+    val userId: String? = null
 ): Serializable {}
