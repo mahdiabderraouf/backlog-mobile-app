@@ -1,10 +1,13 @@
 
 package fr.isen.auroux.backlogapp.project
 
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
+import android.view.DragEvent
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textfield.TextInputEditText
@@ -15,30 +18,35 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import fr.isen.auroux.backlogapp.BaseActivity
 import fr.isen.auroux.backlogapp.databinding.ActivityProjectBacklogBinding
+import fr.isen.auroux.backlogapp.network.Project
 import fr.isen.auroux.backlogapp.network.Task
+import fr.isen.auroux.backlogapp.task.TaskAdapter
 
-class ProjectBacklogActivity : AppCompatActivity() {
+class ProjectBacklogActivity : BaseActivity() {
     private lateinit var binding: ActivityProjectBacklogBinding
     private lateinit var database: DatabaseReference
     private var tasks: List<Task>? = null
-    private lateinit var projectId: String
+    private lateinit var project: Project
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProjectBacklogBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        project = intent.getSerializableExtra("PROJECT") as Project
+
         val actionBar = supportActionBar
-        actionBar?.title = "Current project"
+        actionBar?.title = project.title
 
         database = Firebase.database.reference
 
-        // Get project id from intent extra
-        projectId = "-MTqJD878AnZhiFMx718"
-
-        getProjectTasks(projectId)
+        project.id?.let { getProjectTasks(it) }
 
         setClickListeners()
+        setDropListeners()
     }
 
     private fun getProjectTasks(projectId: String) {
@@ -66,7 +74,8 @@ class ProjectBacklogActivity : AppCompatActivity() {
                 task.status == 1
             }
             binding.todoCount.text = todoTasks.count().toString()
-            val todoTasksAdapter = TaskAdapter(todoTasks)
+            val todoTasksAdapter =
+                TaskAdapter(todoTasks, this)
             binding.todoTasksList.layoutManager = LinearLayoutManager(this)
             binding.todoTasksList.adapter = todoTasksAdapter
 
@@ -74,7 +83,8 @@ class ProjectBacklogActivity : AppCompatActivity() {
                 task.status == 2
             }
             binding.doingCount.text = doingTasks.count().toString()
-            val doingTasksAdapter = TaskAdapter(doingTasks)
+            val doingTasksAdapter =
+                TaskAdapter(doingTasks, this)
             binding.doingTasksList.layoutManager = LinearLayoutManager(this)
             binding.doingTasksList.adapter = doingTasksAdapter
 
@@ -82,7 +92,8 @@ class ProjectBacklogActivity : AppCompatActivity() {
                 task.status == 3
             }
             binding.doneCount.text = doneTasks.count().toString()
-            val doneTaskAdapter = TaskAdapter(doneTasks)
+            val doneTaskAdapter =
+                TaskAdapter(doneTasks, this)
             binding.doneTasksList.layoutManager = LinearLayoutManager(this)
             binding.doneTasksList.adapter = doneTaskAdapter
         }
@@ -175,7 +186,7 @@ class ProjectBacklogActivity : AppCompatActivity() {
 
     private fun addTask(title: String, status: Int) {
         val key = database.child("tasks").push().key
-        val task = Task(key, title, "", status, projectId)
+        val task = Task(key, title, "", status, project.id)
         if (key != null) {
             val addOperation = database.child("tasks").child(key).setValue(task)
             addOperation.addOnSuccessListener {
@@ -183,6 +194,40 @@ class ProjectBacklogActivity : AppCompatActivity() {
             }
             addOperation.addOnFailureListener {
                 Toast.makeText(this, "Something went wrong, please try again.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun setDropListeners() {
+        binding.mainContainer.setOnDragListener { v, event ->
+            when(event.action) {
+                DragEvent.ACTION_DRAG_STARTED -> {
+                    true
+                }
+                DragEvent.ACTION_DRAG_ENTERED -> {
+                    true
+                }
+                DragEvent.ACTION_DRAG_LOCATION -> {
+                    // When the view is dragged to the edge of the screen, scroll the horizontal layout
+                    val outMetrics = DisplayMetrics()
+                    this.display?.getRealMetrics(outMetrics)
+
+                    if (event.x > outMetrics.widthPixels - 400 && event.x < outMetrics.widthPixels) {
+                        binding.horizontalScroll.smoothScrollBy(60, 0)
+                    }
+
+                    if (event.x < 400) {
+                        binding.horizontalScroll.smoothScrollBy(-60, 0)
+                    }
+
+                    true
+                }
+                else -> {
+                    // An unknown action type was received.
+                    Log.e("drop error", "Unknown action type received by OnDragListener.")
+                    false
+                }
             }
         }
     }

@@ -143,6 +143,7 @@ class AddProjectActivity : BaseActivity() {
             }
         }
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
@@ -155,6 +156,4 @@ class AddProjectActivity : BaseActivity() {
         private const val IMAGE_PICK_CODE = 100
         private const val PERMISSION_CODE = 111
     }
-
-
 }

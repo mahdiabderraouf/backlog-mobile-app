@@ -2,13 +2,15 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainContainer"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".project.ProjectBacklogActivity">
 
     <HorizontalScrollView
+        android:id="@+id/horizontalScroll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
@@ -18,8 +20,9 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <androidx.cardview.widget.CardView
@@ -44,7 +47,7 @@
                         android:id="@+id/todoCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2"
+                        android:text="0"
                         android:textSize="24sp"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -154,7 +157,7 @@
                         android:id="@+id/doingCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2"
+                        android:text="0"
                         android:textSize="24sp"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -165,6 +168,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/doing"
+                        android:textColor="@color/black"
                         android:textSize="24sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
@@ -190,7 +194,7 @@
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
                         android:text="@string/add_item"
-                        android:textColor="@android:color/secondary_text_light"
+                        android:textColor="@color/black"
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -262,7 +266,7 @@
                         android:id="@+id/doneCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2"
+                        android:text="0"
                         android:textSize="24sp"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -273,6 +277,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/done"
+                        android:textColor="@color/black"
                         android:textSize="24sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
@@ -298,7 +303,7 @@
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
                         android:text="@string/add_item"
-                        android:textColor="@android:color/secondary_text_light"
+                        android:textColor="@color/black"
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

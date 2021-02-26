@@ -12,7 +12,7 @@ open class BaseActivity: AppCompatActivity() {
         val menuView = menu.findItem(R.id.logout).actionView
 
         menuView.setOnClickListener {
-            Firebase.auth.signOut()
+            //Firebase.auth.signOut()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }

@@ -16,7 +16,7 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import fr.isen.auroux.backlogapp.databinding.ActivitySigninBinding
 import fr.isen.auroux.backlogapp.network.User
-import fr.isen.auroux.backlogapp.project.AddProjectActivity
+import fr.isen.auroux.backlogapp.project.ProjectsActivity
 
 class SignInActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySigninBinding
@@ -34,7 +34,6 @@ class SignInActivity : AppCompatActivity() {
         binding.btnSignIn.setOnClickListener {
             if(verifyInformations()) {
                  login()
-
             } else {
                 Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_LONG).show()
             }
@@ -49,9 +48,9 @@ class SignInActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(binding.email.text.toString(), binding.password.text.toString())
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                   /* val intent = Intent(this, AddProjectActivity::class.java)
-                    startActivity(intent)*/
                     getUser()
+                    val intent = Intent(this, ProjectsActivity::class.java)
+                    startActivity(intent)
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w("firebase", "signInWithEmail:failure", task.exception)
