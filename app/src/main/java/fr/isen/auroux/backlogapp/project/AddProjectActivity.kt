@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -19,16 +20,18 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import fr.isen.auroux.backlogapp.BaseActivity
+import fr.isen.auroux.backlogapp.R
 import fr.isen.auroux.backlogapp.databinding.ActivityAddProjectBinding
 import fr.isen.auroux.backlogapp.network.Project
 import java.util.*
 
 
 class AddProjectActivity : BaseActivity() {
-    private lateinit var binding:ActivityAddProjectBinding
+    private lateinit var binding: ActivityAddProjectBinding
     private lateinit var database: DatabaseReference
-     lateinit var filepath : Uri
+    lateinit var filepath: Uri
 
+    private val imageName = UUID.randomUUID().toString()
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,15 +43,14 @@ class AddProjectActivity : BaseActivity() {
 
 
         binding.chooseImage.setOnClickListener {
-          //check runtime permission
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+            //check runtime permission
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
                     //permission denied
                     val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
                     //show popup to request runtime permission
                     requestPermissions(permissions, PERMISSION_CODE)
-                }
-                else {
+                } else {
                     chooseImage()
                 }
             } else {
@@ -61,84 +63,81 @@ class AddProjectActivity : BaseActivity() {
             addProject()
         }
     }
+
     private fun chooseImage() {
         //Intent to pick image
         val intent = Intent(Intent.ACTION_PICK)
-        intent.type ="image/*"
-        intent.action=Intent.ACTION_GET_CONTENT
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
         startActivityForResult(intent, IMAGE_PICK_CODE)
 
     }
 
     private fun uploadImage() {
+        val progressDialog = ProgressDialog(this)
+        progressDialog.setTitle("image Uploading")
+        progressDialog.show()
 
-        if(filepath != null) {
-            val imageName = UUID.randomUUID().toString()
-            val progressDialog = ProgressDialog(this)
-            progressDialog.setTitle("image Uploading")
-            progressDialog.show()
-
-            val imageRef: StorageReference = FirebaseStorage.getInstance().reference.child("images/$imageName")
-            imageRef.putFile(filepath)
-                .addOnSuccessListener {
-                    progressDialog.dismiss()
-                   // Toast.makeText(this,"Image Uploaded", Toast.LENGTH_LONG).show()
-                }
-                .addOnFailureListener {  p0 ->
-                    progressDialog.dismiss()
-                    Toast.makeText(this, p0.message, Toast.LENGTH_LONG).show()
-                }
-                .addOnProgressListener { p0 ->
-                    val progress : Double = (100.0 * p0.bytesTransferred) / p0.totalByteCount
-                    progressDialog.setMessage("Uploaded ${progress.toInt()}%")
-
-                }
-
-            val imagepath = imageRef.child("users/me/profile.png")
-
-            imagepath.downloadUrl.addOnSuccessListener {
-                filepath = it
-            }.addOnFailureListener {
-                // Handle any errors
+        val imageRef: StorageReference =
+            FirebaseStorage.getInstance().reference.child("images/$imageName")
+        imageRef.putFile(filepath)
+            .addOnSuccessListener {
+                progressDialog.dismiss()
+                // Toast.makeText(this,"Image Uploaded", Toast.LENGTH_LONG).show()
             }
-        }
-        else
-        {
-            Toast.makeText(this, "Please Upload an Image", Toast.LENGTH_SHORT).show()
-        }
+            .addOnFailureListener { p0 ->
+                progressDialog.dismiss()
+                Toast.makeText(this, p0.message, Toast.LENGTH_LONG).show()
+            }
+            .addOnProgressListener { p0 ->
+                val progress: Double = (100.0 * p0.bytesTransferred) / p0.totalByteCount
+                progressDialog.setMessage("Uploaded ${progress.toInt()}%")
+
+            }
     }
 
 
-        private fun addProject() {
-        val key = database.child("projects").push().key
-        val id = auth.currentUser?.uid
+    private fun addProject() {
         val title = binding.titleProject.text.toString().trim()
-
+        val userId = auth.currentUser?.uid
+        if (title.isNotEmpty()) {
+            val id = database.push().key
             val project = Project(
                 id = id,
                 title = title,
-                imagePath = filepath.toString()
+                imagePath = imageName,
+                userId = userId
             )
-            if (title.isNotEmpty()) {
-                key?.let { database.child("projects").child(it).setValue(project) }
-                Toast.makeText(applicationContext,"Your project has been saved", Toast.LENGTH_LONG).show()
+            if (id != null) {
+                database.child("projects").child(id).setValue(project)
+                Toast.makeText(
+                    applicationContext,
+                    "Your project has been saved",
+                    Toast.LENGTH_LONG
+                ).show()
             }
-            else {
-                Toast.makeText(applicationContext, "Please fill the field.", Toast.LENGTH_LONG).show()
-            }
+            binding.titleProject.setText("");
+            binding.chooseImage.setImageResource(R.drawable.ic_iconfinder_camera)
+        } else {
+            Toast.makeText(applicationContext, "Please fill the field.", Toast.LENGTH_LONG).show()
+        }
+
+
     }
 
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        when(requestCode) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
             PERMISSION_CODE -> {
-                if(grantResults.isNotEmpty() && grantResults [0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //permission from popup granted
                     chooseImage()
-                }
-                else {
+                } else {
                     //permission from popup denied
-                    Toast.makeText(this,"Permission denied",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
                 }
             }
         }
