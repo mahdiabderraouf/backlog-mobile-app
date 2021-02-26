@@ -1,12 +1,10 @@
 package fr.isen.auroux.backlogapp.task
 
-import android.app.Activity
 import android.content.ClipData
 import android.content.ClipDescription
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.DragEvent
 import android.view.LayoutInflater
@@ -20,8 +18,6 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import fr.isen.auroux.backlogapp.databinding.TaskCellBinding
 import fr.isen.auroux.backlogapp.network.Task
-import java.security.AccessController.getContext
-
 
 class TaskAdapter (
     private val tasks: List<Task>,
@@ -61,7 +57,7 @@ class TaskAdapter (
             val myShadow = TaskDragShadowBuilder(v)
 
             // Starts the drag
-            v.startDrag(
+            v.startDragAndDrop(
                 dragData,   // the data to be dragged
                 myShadow,   // the drag shadow builder
                 null,       // no need to use local data
