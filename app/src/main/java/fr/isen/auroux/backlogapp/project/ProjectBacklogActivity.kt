@@ -1,6 +1,7 @@
 
 package fr.isen.auroux.backlogapp.project
 
+import android.content.ClipData
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -220,6 +221,23 @@ class ProjectBacklogActivity : BaseActivity() {
                     if (event.x < 400) {
                         binding.horizontalScroll.smoothScrollBy(-60, 0)
                     }
+
+                    true
+                }
+                else -> {
+                    // An unknown action type was received.
+                    Log.e("drop error", "Unknown action type received by OnDragListener.")
+                    false
+                }
+            }
+        }
+
+        binding.doingTasksList.setOnDragListener { _, event ->
+            when(event.action) {
+                DragEvent.ACTION_DROP -> {
+                    val item: ClipData.Item = event.clipData.getItemAt(0)
+
+                    Log.d("item", item.text.toString())
 
                     true
                 }
