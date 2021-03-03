@@ -45,7 +45,10 @@ class ProjectsActivity : BaseActivity(),
                 // Get Post object and use the values to update the UI
                 val projects = dataSnapshot.getValue<HashMap<String, Project>>()
                 if (projects != null) {
-                    updateUi(ArrayList(projects.values))
+                     val currentUserProjects = projects.values.filter {
+                        it.userId == auth.currentUser?.uid
+                     }
+                    updateUi(currentUserProjects)
                 }
             }
 
