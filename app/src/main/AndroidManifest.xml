@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BacklogApp">
+        <activity android:name=".profile.ReadAndUpdateDataActivity"></activity>
         <activity android:name=".project.AddProjectActivity" />
         <activity android:name=".project.ProjectsActivity" />
         <activity
