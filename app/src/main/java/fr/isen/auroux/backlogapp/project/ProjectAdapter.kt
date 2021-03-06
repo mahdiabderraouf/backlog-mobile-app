@@ -1,12 +1,15 @@
 package fr.isen.auroux.backlogapp.project
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.squareup.picasso.Picasso
 import fr.isen.auroux.backlogapp.databinding.ProjectCellBinding
 import fr.isen.auroux.backlogapp.network.Project
@@ -16,7 +19,6 @@ class ProjectAdapter(
     private val projects: List<Project>,
     private val projectCellClickListener: ProjectCellClickListener
 ): RecyclerView.Adapter<ProjectAdapter.ProjectViewHolder>() {
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
         return ProjectViewHolder(
             ProjectCellBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -26,8 +28,12 @@ class ProjectAdapter(
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ProjectViewHolder, position: Int) {
         holder.projectTitle.text = projects[position].title
-        projects[position].imagePath?.let {
-            Picasso.get().load(projects[position].imagePath).into(holder.projectImage)
+        projects[position].imagePath?.let {imageName ->
+            val task = FirebaseStorage.getInstance().reference.child("images").child(imageName).downloadUrl
+            task.addOnSuccessListener {
+                Log.d("URL", it.toString())
+                Picasso.get().load(it).into(holder.projectImage)
+            }
         }
 
         projects[position].let { project ->
