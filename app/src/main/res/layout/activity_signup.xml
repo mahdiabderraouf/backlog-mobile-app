@@ -30,6 +30,7 @@
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/poppins"
         android:text="@string/sign_up"
+        android:textSize="18sp"
         app:cornerRadius="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
