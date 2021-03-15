@@ -60,7 +60,7 @@ class SignUpActivity : AppCompatActivity() {
     private fun addUser() {
         val key = database.child("users").push().key
         val user = User(
-            id = auth.currentUser?.uid,
+            id = key,
             username = binding.username.text.toString(),
             lastname = binding.lastname.text.toString(),
             firstname = binding.firstname.text.toString(),
