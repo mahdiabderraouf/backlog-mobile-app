@@ -1,4 +1,3 @@
-
 package fr.isen.auroux.backlogapp.project
 
 import android.os.Build
@@ -6,6 +5,7 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.DragEvent
+import android.view.View
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.view.isGone
@@ -53,16 +53,14 @@ class ProjectBacklogActivity : BaseActivity() {
         val tasksRef = database.child("tasks")
         val tasksListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // Get Post object and use the values to update the UI
-                 tasks = dataSnapshot.getValue<HashMap<String, Task>>()?.values?.filter {
+                tasks = dataSnapshot.getValue<HashMap<String, Task>>()?.values?.filter {
                     it.projectId == projectId
                 }
                 updateUI()
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                // Getting Post failed, log a message
-                Log.w("firebase", "loadPost:onCancelled", databaseError.toException())
+                Log.w("firebase", "Failed to load project.")
             }
         }
         tasksRef.addValueEventListener(tasksListener)
@@ -112,74 +110,50 @@ class ProjectBacklogActivity : BaseActivity() {
 
     private fun setClickListeners() {
         binding.btnShowAddForm.setOnClickListener {
-            binding.textInputLayout1.isGone = false
-            binding.cancelBtn1.isGone = false
-            binding.addBtn1.isGone = false
-            binding.btnShowAddForm.isGone = true
+            toggleForm("todo")
         }
 
         binding.cancelBtn1.setOnClickListener {
-            binding.cancelBtn1.isGone = true
-            binding.textInputLayout1.isGone = true
-            binding.addBtn1.isGone = true
-            binding.btnShowAddForm.isGone = false
+            toggleForm("todo")
         }
 
         binding.btnShowAddFormDoing.setOnClickListener {
-            binding.textInputLayout2.isGone = false
-            binding.cancelBtn2.isGone = false
-            binding.addBtn2.isGone = false
-            binding.btnShowAddFormDoing.isGone = true
+            toggleForm("doing")
         }
 
         binding.cancelBtn2.setOnClickListener {
-            binding.cancelBtn2.isGone = true
-            binding.textInputLayout2.isGone = true
-            binding.addBtn2.isGone = true
-            binding.btnShowAddFormDoing.isGone = false
+            toggleForm("doing")
         }
 
         binding.btnShowAddFormDone.setOnClickListener {
-            binding.textInputLayout3.isGone = false
-            binding.cancelBtn3.isGone = false
-            binding.addBtn3.isGone = false
-            binding.btnShowAddFormDone.isGone = true
+            toggleForm("done")
         }
 
         binding.cancelBtn3.setOnClickListener {
-            binding.cancelBtn3.isGone = true
-            binding.textInputLayout3.isGone = true
-            binding.addBtn3.isGone = true
-            binding.btnShowAddFormDone.isGone = false
+            toggleForm("done")
         }
 
         binding.addBtn1.setOnClickListener {
             if (!isEmpty(binding.todoTextInput)) {
                 addTask(binding.todoTextInput.text.toString(), 1)
-                binding.cancelBtn1.isGone = true
-                binding.textInputLayout1.isGone = true
-                binding.addBtn1.isGone = true
-                binding.btnShowAddForm.isGone = false
+                binding.todoTextInput.text = null
+                toggleForm("todo")
             }
         }
 
         binding.addBtn2.setOnClickListener {
             if (!isEmpty(binding.doingTextInput)) {
                 addTask(binding.doingTextInput.text.toString(), 2)
-                binding.cancelBtn2.isGone = true
-                binding.textInputLayout2.isGone = true
-                binding.addBtn2.isGone = true
-                binding.btnShowAddFormDoing.isGone = false
+                binding.doingTextInput.text = null
+                toggleForm("doing")
             }
         }
 
         binding.addBtn3.setOnClickListener {
             if (!isEmpty(binding.doneTextInput)) {
                 addTask(binding.doneTextInput.text.toString(), 3)
-                binding.cancelBtn3.isGone = true
-                binding.textInputLayout3.isGone = true
-                binding.addBtn3.isGone = true
-                binding.btnShowAddFormDone.isGone = false
+                binding.doneTextInput.text = null
+                toggleForm("done")
             }
         }
     }
@@ -188,20 +162,66 @@ class ProjectBacklogActivity : BaseActivity() {
         val key = database.child("tasks").push().key
         val task = Task(key, title, "", status, project.id)
         if (key != null) {
-            val addOperation = database.child("tasks").child(key).setValue(task)
-            addOperation.addOnSuccessListener {
-                Toast.makeText(this, "Task added successfully", Toast.LENGTH_SHORT).show()
-            }
-            addOperation.addOnFailureListener {
-                Toast.makeText(this, "Something went wrong, please try again.", Toast.LENGTH_SHORT).show()
-            }
+            database.child("tasks").child(key).setValue(task)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Task added successfully", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(
+                        this,
+                        "Something went wrong, please try again.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
     private fun setDropListeners() {
-        binding.mainContainer.setOnDragListener { v, event ->
-            when(event.action) {
+        binding.mainContainer.setOnDragListener(onDragToEdgesListener())
+        binding.todoCard.setOnDragListener(onDropListener(1))
+        binding.doingCard.setOnDragListener(onDropListener(2))
+        binding.doneCard.setOnDragListener(onDropListener(3))
+    }
+
+    private fun onDropListener(status: Int): View.OnDragListener {
+        return View.OnDragListener { _, event ->
+            when (event.action) {
+                DragEvent.ACTION_DRAG_STARTED -> {
+                    true
+                }
+                DragEvent.ACTION_DRAG_ENTERED -> {
+                    true
+                }
+                DragEvent.ACTION_DROP -> {
+                    val taskId: String = event.clipData.getItemAt(0).text.toString()
+                    val task = tasks?.firstOrNull {
+                        it.id == taskId
+                    }
+                    if (task !== null) {
+                        task.status = status
+                        val taskValues = task.toMap()
+                        database.updateChildren(
+                            hashMapOf<String, Any>(
+                                "/tasks/$taskId" to taskValues
+                            )
+                        )
+                    }
+                    true
+                }
+                else -> {
+                    // An unknown action type was received.
+                    Log.e("drop error", "Unknown action type received by OnDragListener.")
+                    false
+                }
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun onDragToEdgesListener(): View.OnDragListener {
+        return View.OnDragListener { _, event ->
+            when (event.action) {
                 DragEvent.ACTION_DRAG_STARTED -> {
                     true
                 }
@@ -221,6 +241,14 @@ class ProjectBacklogActivity : BaseActivity() {
                         binding.horizontalScroll.smoothScrollBy(-60, 0)
                     }
 
+                    if (event.y > outMetrics.heightPixels - 400 && event.y < outMetrics.heightPixels) {
+                        binding.horizontalScroll.smoothScrollBy(0, 60)
+                    }
+
+                    if (event.y < 400) {
+                        binding.horizontalScroll.smoothScrollBy(0, 660)
+                    }
+
                     true
                 }
                 else -> {
@@ -228,6 +256,32 @@ class ProjectBacklogActivity : BaseActivity() {
                     Log.e("drop error", "Unknown action type received by OnDragListener.")
                     false
                 }
+            }
+        }
+    }
+
+    private fun toggleForm(form: String) {
+        when (form) {
+            "todo" -> {
+                binding.textInputLayout1.isGone = !binding.textInputLayout1.isGone
+                binding.cancelBtn1.isGone = !binding.cancelBtn1.isGone
+                binding.addBtn1.isGone = !binding.addBtn1.isGone
+                binding.btnShowAddForm.isGone = !binding.btnShowAddForm.isGone
+            }
+            "doing" -> {
+                binding.textInputLayout2.isGone = !binding.textInputLayout2.isGone
+                binding.cancelBtn2.isGone = !binding.cancelBtn2.isGone
+                binding.addBtn2.isGone = !binding.addBtn2.isGone
+                binding.btnShowAddFormDoing.isGone = !binding.btnShowAddFormDoing.isGone
+            }
+            "done" -> {
+                binding.textInputLayout3.isGone = !binding.textInputLayout3.isGone
+                binding.cancelBtn3.isGone = !binding.cancelBtn3.isGone
+                binding.addBtn3.isGone = !binding.addBtn3.isGone
+                binding.btnShowAddFormDone.isGone = !binding.btnShowAddFormDone.isGone
+            }
+            else -> {
+                Log.e("error", "Invalid form.")
             }
         }
     }
