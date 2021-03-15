@@ -3,8 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/delete_project"
+        android:icon="@drawable/ic_icon_logout"
+        android:title="Delete project"
+        android:visible="false" />
+    <item
+        android:id="@+id/profile"
+        android:icon="@drawable/ic_icon_logout"
+        android:title="My profile" />
+    <item
         android:id="@+id/logout"
         android:icon="@drawable/ic_icon_logout"
-        android:title="@string/logout"
-        app:actionLayout="@layout/menu_user" />
+        android:title="@string/logout" />
 </menu>

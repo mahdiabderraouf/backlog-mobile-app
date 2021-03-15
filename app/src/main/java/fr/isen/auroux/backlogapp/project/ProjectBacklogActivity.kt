@@ -1,10 +1,15 @@
 package fr.isen.auroux.backlogapp.project
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.DragEvent
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -19,6 +24,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import fr.isen.auroux.backlogapp.BaseActivity
+import fr.isen.auroux.backlogapp.R
 import fr.isen.auroux.backlogapp.databinding.ActivityProjectBacklogBinding
 import fr.isen.auroux.backlogapp.network.Project
 import fr.isen.auroux.backlogapp.network.Task
@@ -29,6 +35,23 @@ class ProjectBacklogActivity : BaseActivity() {
     private lateinit var database: DatabaseReference
     private var tasks: List<Task>? = null
     private lateinit var project: Project
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        super.onCreateOptionsMenu(menu)
+        menu.findItem(R.id.delete_project).isVisible = true
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection
+        return when (item.itemId) {
+            R.id.delete_project -> {
+                deleteProject()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +75,7 @@ class ProjectBacklogActivity : BaseActivity() {
     private fun getProjectTasks(projectId: String) {
         val tasksRef = database.child("tasks")
         val tasksListener = object : ValueEventListener {
+            @RequiresApi(Build.VERSION_CODES.N)
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 tasks = dataSnapshot.getValue<HashMap<String, Task>>()?.values?.filter {
                     it.projectId == projectId
@@ -66,8 +90,10 @@ class ProjectBacklogActivity : BaseActivity() {
         tasksRef.addValueEventListener(tasksListener)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
+    @SuppressLint("SetTextI18n")
     private fun updateUI() {
-        tasks?.let {
+        tasks?.let { it ->
             val todoTasks = it.filter { task ->
                 task.status == 1
             }
@@ -94,6 +120,16 @@ class ProjectBacklogActivity : BaseActivity() {
                 TaskAdapter(doneTasks, this)
             binding.doneTasksList.layoutManager = LinearLayoutManager(this)
             binding.doneTasksList.adapter = doneTaskAdapter
+            tasks?.let { it2 ->
+                if (it2.count() > 0) {
+                    val percentage = doneTasks.count() * 100 / it2.count()
+                    binding.progressPercentage.text = "$percentage %"
+                    binding.progressBar.setProgress(percentage, true)
+                } else {
+                    binding.progressPercentage.text = "0 %"
+                    binding.progressBar.setProgress(0, true)
+                }
+            }
         }
     }
 
@@ -284,5 +320,26 @@ class ProjectBacklogActivity : BaseActivity() {
                 Log.e("error", "Invalid form.")
             }
         }
+    }
+
+    private fun deleteProject() {
+        val builder: AlertDialog.Builder? = this.let {
+            AlertDialog.Builder(it)
+        }
+        builder?.setMessage("Are you sure ?")
+            ?.setTitle("Confirm delete")
+            ?.setPositiveButton(
+                "Confirm"
+            ) { _, _ ->
+                project.id?.let { database.child("projects").child(it).removeValue() }
+                val intent = Intent(this, ProjectsActivity::class.java)
+                startActivity(intent)
+                Toast.makeText(this, "Project deleted successfully.", Toast.LENGTH_LONG).show()
+            }?.setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+
+        val dialog: AlertDialog? = builder?.create()
+        dialog?.show()
     }
 }
