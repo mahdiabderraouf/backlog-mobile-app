@@ -28,4 +28,6 @@
     <string name="nameProject">Name of the project</string>
     <string name="descriptionProject">Description of the project</string>
     <string name="finished">Finished</string>
+    <string name="profile">My profile</string>
+    <string name="saveProfileData">Save</string>
 </resources>
