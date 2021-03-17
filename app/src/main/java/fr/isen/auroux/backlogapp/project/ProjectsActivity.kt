@@ -16,6 +16,7 @@ import com.google.firebase.ktx.Firebase
 import fr.isen.auroux.backlogapp.BaseActivity
 import fr.isen.auroux.backlogapp.databinding.ActivityProjectdisplayBinding
 import fr.isen.auroux.backlogapp.network.Project
+import fr.isen.auroux.backlogapp.network.User
 import fr.isen.auroux.backlogapp.network.UserProject
 
 class ProjectsActivity : BaseActivity(),
@@ -24,6 +25,7 @@ class ProjectsActivity : BaseActivity(),
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
     private lateinit var currentUserProjectsIds: List<String?>
+    private var user: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,8 +35,8 @@ class ProjectsActivity : BaseActivity(),
         database = Firebase.database.reference
         auth = Firebase.auth
 
+        getUser()
         getProjectsIds()
-
         getProjects(database.child("projects"))
 
         binding.addProject.setOnClickListener {
@@ -64,14 +66,33 @@ class ProjectsActivity : BaseActivity(),
         ref.addValueEventListener(projectListener)
     }
 
+
+    private fun getUser() {
+        val userListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                val users = dataSnapshot.getValue<HashMap<String, User>>()
+                user = users?.values?.firstOrNull {
+                    it.email == auth.currentUser?.email
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w("firebase", "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+        database.child("users").addListenerForSingleValueEvent(userListener)
+    }
+
     private fun getProjectsIds() {
         val projectListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
-                val projects = dataSnapshot.getValue<HashMap<String, UserProject>>()
-                if (projects != null) {
-                    currentUserProjectsIds = projects.values.filter {
-                        it.userId == auth.currentUser?.uid
+                val userProject = dataSnapshot.getValue<HashMap<String, UserProject>>()
+                if (userProject != null) {
+                    currentUserProjectsIds = userProject.values.filter {
+                        it.userId == user?.id
                     }.map {
                         it.projectId
                     }

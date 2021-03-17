@@ -28,6 +28,7 @@ import fr.isen.auroux.backlogapp.R
 import fr.isen.auroux.backlogapp.databinding.ActivityProjectBacklogBinding
 import fr.isen.auroux.backlogapp.network.Project
 import fr.isen.auroux.backlogapp.network.Task
+import fr.isen.auroux.backlogapp.network.User
 import fr.isen.auroux.backlogapp.task.TaskAdapter
 
 class ProjectBacklogActivity : BaseActivity() {
