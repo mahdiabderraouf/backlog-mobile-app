@@ -4,8 +4,7 @@ import com.google.firebase.database.IgnoreExtraProperties
 import java.io.Serializable
 
 @IgnoreExtraProperties
-data class Project(
-    val id: String? = null,
-    val title: String? = null,
-    val imagePath: String? = null,
+data class UserProject(
+    val userId: String? = null,
+    val projectId: String? = null
 ): Serializable {}

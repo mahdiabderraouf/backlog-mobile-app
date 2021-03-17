@@ -16,33 +16,76 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import fr.isen.auroux.backlogapp.BaseActivity
 import fr.isen.auroux.backlogapp.databinding.ActivityAddCollaboratorBinding
+import fr.isen.auroux.backlogapp.databinding.ActivityMainBinding
 import fr.isen.auroux.backlogapp.network.Project
 import fr.isen.auroux.backlogapp.network.User
+import fr.isen.auroux.backlogapp.network.UserProject
 
-class AddCollaboratorActivity /* BaseActivity*/ {
-   /* private lateinit var database: DatabaseReference
-    private lateinit var binding: ActivityAddCollaboratorBinding*/
+class AddCollaboratorActivity : BaseActivity() {
+    private lateinit var database: DatabaseReference
+    private lateinit var binding: ActivityAddCollaboratorBinding
 
-  CollButton.setOnClickListener
-    {
-        val emailColl = CollEmail.text.toString()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityAddCollaboratorBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        database = Firebase.database.reference
 
-        Log.w(tag:"AddCollaboratorActivity", msg:"Email is: " + emailColl)
-    }
+        binding.CollButton.setOnClickListener {
 
-    private fun getEmail(ref: DatabaseReference) {
-        val collaboratorListener = object : ValueEventListener{
-
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                 val collaborator = dataSnapshot.getValue<HashMap<String, Collaborator>>()
-        if (collaborator != null) {
-            val currentUserProjects = collaborator.values.filter {
-
+            if (verifyInformations()){
+                getEmail()
             }
+            else{
+                Toast.makeText(this, "Veuillez rentrer un Email", Toast.LENGTH_SHORT).show()
             }
+
         }
     }
+
+    private fun AddCollaborator(user: User, project: Project){
+        val id = database.push().key
+        val userProject = UserProject(
+            userId = user.id,
+            projectId = project.id
+        )
+        if (id != null) {
+            database.child("user-project").child(id).setValue(project)
+            Toast.makeText(
+                applicationContext,
+                "Le collaborator a bien été ajouté au projet",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+
+    }
+    private fun getEmail() {
+        val collaboratorListener = object : ValueEventListener {
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val users = dataSnapshot.getValue<HashMap<String, User>>()
+                if (users != null) {
+                    val user = users.values.firstOrNull {
+                        it.email == binding.CollEmail.text.toString()
+                    }
+                    if (user != null){
+                        AddCollaborator(user)
+                    }
+                    else{
+                        Toast.makeText(this@AddCollaboratorActivity, "Cette Email n'existe pas", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w("firebase", "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+
+        database.child("users").addValueEventListener(collaboratorListener)
+    }
     private fun verifyInformations(): Boolean {
-        return (binding.Collemail.text?.isNotEmpty() == true )
-    }*/
+        return (binding.CollEmail.text?.isNotEmpty() == true)
+    }
 }
