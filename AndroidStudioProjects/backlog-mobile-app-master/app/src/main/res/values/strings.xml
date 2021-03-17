@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Backlogger</string>
+    <string name="description">Description</string>
+    <string name="add">Add</string>
+    <string name="upload_image">Upload Image</string>
+    <string name="Add_Project">Add New Project</string>
+    <string name="Project_name">Project Name</string>
+    <string name="like">Like</string>
+    <string name="password">Password</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="sign_up">Sign up</string>
+    <string name="sign_in">Sign in</string>
+    <string name="i_have_an_account">I have an account already</string>
+    <string name="create_account">New user ? create account</string>
+    <string name="logout">Logout</string>
+    <string name="firstname">First name</string>
+    <string name="lastname">Last name</string>
+    <string name="todo">To do</string>
+    <string name="doing">Doing</string>
+    <string name="done">Done</string>
+    <string name="add_item">+ Add an item</string>
+    <string name="add_item_hint">Type something in here …</string>
+    <string name="add_project">Add a project</string>
+    <string name="add_project_title">Add a project title</string>
+    <string name="add_project_description">Add a post description</string>
+    <string name="screen2_title">Your projects</string>
+    <string name="nameProject">Name of the project</string>
+    <string name="descriptionProject">Description of the project</string>
+    <string name="finished">Finished</string>
+    <string name="profile">My profile</string>
+    <string name="saveProfileData">Save</string>
+    <string name="progression">Progression</string>
+    <string name="Add_Collaborator">Add a collaborator</string>
+    <string name="Collaborator_Email">Email</string>
+    <string name="Add_Button_Collaborator">Add Collaborator</string>
+</resources>
