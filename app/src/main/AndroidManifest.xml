@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BacklogApp">
-        <activity android:name=".profile.UpdateProfileActivity"></activity>
+        <activity android:name=".project.AddCollaboratorActivity"></activity>
+        <activity android:name=".profile.UpdateProfileActivity" />
         <activity android:name=".project.AddProjectActivity" />
         <activity android:name=".project.ProjectsActivity" />
         <activity

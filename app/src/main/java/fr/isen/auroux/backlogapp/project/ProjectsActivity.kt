@@ -16,12 +16,14 @@ import com.google.firebase.ktx.Firebase
 import fr.isen.auroux.backlogapp.BaseActivity
 import fr.isen.auroux.backlogapp.databinding.ActivityProjectdisplayBinding
 import fr.isen.auroux.backlogapp.network.Project
+import fr.isen.auroux.backlogapp.network.UserProject
 
 class ProjectsActivity : BaseActivity(),
     ProjectCellClickListener {
     private lateinit var binding: ActivityProjectdisplayBinding
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
+    private lateinit var currentUserProjectsIds: List<String?>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +32,8 @@ class ProjectsActivity : BaseActivity(),
 
         database = Firebase.database.reference
         auth = Firebase.auth
+
+        getProjectsIds()
 
         getProjects(database.child("projects"))
 
@@ -45,9 +49,9 @@ class ProjectsActivity : BaseActivity(),
                 // Get Post object and use the values to update the UI
                 val projects = dataSnapshot.getValue<HashMap<String, Project>>()
                 if (projects != null) {
-                     val currentUserProjects = projects.values.filter {
-                        it.userId == auth.currentUser?.uid
-                     }
+                    val currentUserProjects = projects.values.filter {
+                        currentUserProjectsIds.contains(it.id)
+                    }
                     updateUi(currentUserProjects)
                 }
             }
@@ -58,6 +62,28 @@ class ProjectsActivity : BaseActivity(),
             }
         }
         ref.addValueEventListener(projectListener)
+    }
+
+    private fun getProjectsIds() {
+        val projectListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                val projects = dataSnapshot.getValue<HashMap<String, UserProject>>()
+                if (projects != null) {
+                    currentUserProjectsIds = projects.values.filter {
+                        it.userId == auth.currentUser?.uid
+                    }.map {
+                        it.projectId
+                    }
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w("firebase", "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+        database.child("user-project").addValueEventListener(projectListener)
     }
 
     private fun updateUi(projects: List<Project>) {

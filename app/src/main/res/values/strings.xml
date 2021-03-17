@@ -31,4 +31,5 @@
     <string name="profile">My profile</string>
     <string name="saveProfileData">Save</string>
     <string name="progression">Progression</string>
+    <string name="add_collaborator">Invite a collaborator</string>
 </resources>

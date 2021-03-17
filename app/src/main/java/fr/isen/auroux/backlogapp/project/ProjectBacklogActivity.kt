@@ -39,6 +39,7 @@ class ProjectBacklogActivity : BaseActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         super.onCreateOptionsMenu(menu)
         menu.findItem(R.id.delete_project).isVisible = true
+        menu.findItem(R.id.invite_user).isVisible = true
         return true
     }
 
@@ -47,6 +48,13 @@ class ProjectBacklogActivity : BaseActivity() {
         return when (item.itemId) {
             R.id.delete_project -> {
                 deleteProject()
+                true
+            }
+            R.id.invite_user -> {
+                val intent = Intent(this, AddCollaboratorActivity::class.java).apply {
+                    putExtra("PROJECT", project)
+                }
+                startActivity(intent)
                 true
             }
             else -> super.onOptionsItemSelected(item)

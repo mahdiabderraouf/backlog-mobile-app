@@ -8,10 +8,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
-import androidx.core.content.res.ResourcesCompat
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
@@ -23,13 +20,13 @@ import fr.isen.auroux.backlogapp.BaseActivity
 import fr.isen.auroux.backlogapp.R
 import fr.isen.auroux.backlogapp.databinding.ActivityAddProjectBinding
 import fr.isen.auroux.backlogapp.network.Project
+import fr.isen.auroux.backlogapp.network.UserProject
 import java.util.*
-
 
 class AddProjectActivity : BaseActivity() {
     private lateinit var binding: ActivityAddProjectBinding
     private lateinit var database: DatabaseReference
-    lateinit var filepath: Uri
+    private lateinit var filepath: Uri
 
     private val imageName = UUID.randomUUID().toString()
     private lateinit var auth: FirebaseAuth
@@ -99,14 +96,12 @@ class AddProjectActivity : BaseActivity() {
 
     private fun addProject() {
         val title = binding.titleProject.text.toString().trim()
-        val userId = auth.currentUser?.uid
         if (title.isNotEmpty()) {
-            val id = database.push().key
+            var id = database.push().key
             val project = Project(
                 id = id,
                 title = title,
-                imagePath = imageName,
-                userId = userId
+                imagePath = imageName
             )
             if (id != null) {
                 database.child("projects").child(id).setValue(project)
@@ -116,7 +111,15 @@ class AddProjectActivity : BaseActivity() {
                     Toast.LENGTH_LONG
                 ).show()
             }
-            binding.titleProject.setText("");
+            id = database.push().key
+            val userProject = UserProject(
+                auth.currentUser?.uid,
+                projectId = project.id
+            )
+            if (id != null) {
+                database.child("user-project").child(id).setValue(userProject)
+            }
+            binding.titleProject.setText("")
             binding.chooseImage.setImageResource(R.drawable.ic_iconfinder_camera)
         } else {
             Toast.makeText(applicationContext, "Please fill the field.", Toast.LENGTH_LONG).show()
