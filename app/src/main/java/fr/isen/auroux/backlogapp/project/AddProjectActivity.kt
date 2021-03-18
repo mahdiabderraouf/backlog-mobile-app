@@ -8,11 +8,16 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -20,6 +25,7 @@ import fr.isen.auroux.backlogapp.BaseActivity
 import fr.isen.auroux.backlogapp.R
 import fr.isen.auroux.backlogapp.databinding.ActivityAddProjectBinding
 import fr.isen.auroux.backlogapp.network.Project
+import fr.isen.auroux.backlogapp.network.User
 import fr.isen.auroux.backlogapp.network.UserProject
 import java.util.*
 
@@ -30,7 +36,7 @@ class AddProjectActivity : BaseActivity() {
 
     private val imageName = UUID.randomUUID().toString()
     private lateinit var auth: FirebaseAuth
-
+    private var user: User? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         database = Firebase.database.reference
@@ -38,6 +44,7 @@ class AddProjectActivity : BaseActivity() {
         setContentView(binding.root)
         auth = Firebase.auth
 
+        getUser()
 
         binding.chooseImage.setOnClickListener {
             //check runtime permission
@@ -56,8 +63,17 @@ class AddProjectActivity : BaseActivity() {
         }
 
         binding.imgPickBtn.setOnClickListener {
-            uploadImage()
-            addProject()
+            val titleP = binding.titleProject.text.toString()
+
+            if (titleP.isNotEmpty() && this::filepath.isInitialized) {
+                uploadImage()
+                addProject()
+            } else {
+                Toast.makeText(applicationContext, "Please fill the field.", Toast.LENGTH_LONG)
+                    .show()
+            }
+
+
         }
     }
 
@@ -67,7 +83,6 @@ class AddProjectActivity : BaseActivity() {
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
         startActivityForResult(intent, IMAGE_PICK_CODE)
-
     }
 
     private fun uploadImage() {
@@ -113,7 +128,7 @@ class AddProjectActivity : BaseActivity() {
             }
             id = database.push().key
             val userProject = UserProject(
-                auth.currentUser?.uid,
+                user?.id,
                 projectId = project.id
             )
             if (id != null) {
@@ -127,6 +142,25 @@ class AddProjectActivity : BaseActivity() {
 
 
     }
+
+    private fun getUser() {
+        val userListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                val users = dataSnapshot.getValue<HashMap<String, User>>()
+                user = users?.values?.firstOrNull {
+                    it.email == auth.currentUser?.email
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w("firebase", "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+        database.child("users").addListenerForSingleValueEvent(userListener)
+    }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
