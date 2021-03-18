@@ -20,6 +20,7 @@ class UpdateProfileActivity : BaseActivity() {
     private lateinit var binding: ActivityUpdateProfileBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
+    private var user: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,12 +52,10 @@ class UpdateProfileActivity : BaseActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
                 val users = dataSnapshot.getValue<HashMap<String, User>>()
-                val user = users?.values?.firstOrNull {
+                user = users?.values?.firstOrNull {
                     it.email == auth.currentUser?.email
                 }
-                if (user != null) {
-                    updateUI(user)
-                }
+                user?.let { updateUI(it) }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -75,24 +74,27 @@ class UpdateProfileActivity : BaseActivity() {
     }
 
     private fun updateProfile() {
-        val user = User(
-            binding.username.text.toString(),
-            binding.email.text.toString(),
-            binding.lastname.text.toString(),
-            binding.firstname.text.toString(),
-            auth.currentUser?.uid
-        )
-        val userData = user.toMap()
+        user?.let {
+            val newUser = User(
+                binding.username.text.toString(),
+                binding.email.text.toString(),
+                binding.lastname.text.toString(),
+                binding.firstname.text.toString(),
+                it.id
+            )
+            val userData = it.toMap()
 
-        val childUpdates = hashMapOf<String, Any>(
-            "/users/${user.id}" to userData
-        )
-        database.updateChildren(childUpdates).addOnSuccessListener {
-            Toast.makeText(this, "Profile updated successfully.", Toast.LENGTH_SHORT).show()
-        }.addOnFailureListener {
-            Toast.makeText(this, "Something went wrong, please try again.", Toast.LENGTH_SHORT)
-                .show()
+            val childUpdates = hashMapOf<String, Any>(
+                "/users/${it.id}" to userData
+            )
+            database.updateChildren(childUpdates).addOnSuccessListener {
+                Toast.makeText(this, "Profile updated successfully.", Toast.LENGTH_SHORT).show()
+            }.addOnFailureListener {
+                Toast.makeText(this, "Something went wrong, please try again.", Toast.LENGTH_SHORT)
+                    .show()
 
+            }
         }
+
     }
 }

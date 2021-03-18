@@ -37,7 +37,6 @@ class ProjectsActivity : BaseActivity(),
 
         getUser()
         getProjectsIds()
-        getProjects(database.child("projects"))
 
         binding.addProject.setOnClickListener {
             val intent = Intent(this, AddProjectActivity::class.java)
@@ -45,7 +44,7 @@ class ProjectsActivity : BaseActivity(),
         }
     }
 
-    private fun getProjects(ref: DatabaseReference) {
+    private fun getProjects() {
         val projectListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
@@ -54,6 +53,7 @@ class ProjectsActivity : BaseActivity(),
                     val currentUserProjects = projects.values.filter {
                         currentUserProjectsIds.contains(it.id)
                     }
+                    Log.d("count", currentUserProjects.count().toString())
                     updateUi(currentUserProjects)
                 }
             }
@@ -63,7 +63,7 @@ class ProjectsActivity : BaseActivity(),
                 Log.w("firebase", "loadPost:onCancelled", databaseError.toException())
             }
         }
-        ref.addValueEventListener(projectListener)
+        database.child("projects").addValueEventListener(projectListener)
     }
 
 
@@ -96,6 +96,7 @@ class ProjectsActivity : BaseActivity(),
                     }.map {
                         it.projectId
                     }
+                    getProjects()
                 }
             }
 
