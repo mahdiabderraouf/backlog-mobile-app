@@ -56,6 +56,9 @@ class AddProjectActivity : BaseActivity() {
         }
 
         binding.imgPickBtn.setOnClickListener {
+            if(this::filepath.isInitialized) {
+
+            }
             uploadImage()
             addProject()
         }
@@ -67,7 +70,6 @@ class AddProjectActivity : BaseActivity() {
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
         startActivityForResult(intent, IMAGE_PICK_CODE)
-
     }
 
     private fun uploadImage() {
